@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Najdi lamy 🦙</title>
+  <style>
+    body {
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      background: linear-gradient(to bottom, #fdf6e3, #f3d2c1);
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    header {
+      background-color: #f582ae;
+      color: white;
+      padding: 20px;
+      font-size: 28px;
+      border-bottom: 6px solid #8bd3dd;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    .game-box {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      margin: 20px auto;
+      max-width: 800px;
+      padding: 20px;
+    }
+
+    .status {
+      font-size: 20px;
+      margin: 15px 0;
+      font-weight: bold;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .grid img {
+      width: 100%;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: transform 0.2s, filter 0.2s;
+      filter: brightness(90%);
+    }
+
+    .grid img:hover {
+      filter: brightness(100%);
+      transform: scale(1.05);
+    }
+
+    .jump {
+      animation: jump-animation 0.4s ease;
+    }
+
+    @keyframes jump-animation {
+      0%   { transform: translateY(0); }
+      50%  { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
+    }
+
+    footer {
+      background-color: #8bd3dd;
+      color: #333;
+      padding: 15px;
+      margin-top: 40px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    🎯 Najdi všechny lamy 🦙
+  </header>
+
+  <main>
+    <div class="game-box">
+      <p class="status">⏳ Čas: <span id="time">30</span> s | Skóre: <span id="score">0</span></p>
+      <button onclick="startGame()">▶ Spustit hru</button>
+      <div id="grid" class="grid"></div>
+    </div>
+  </main>
+
+  <footer>
+    Vyrobeno s láskou 💕
+  </footer>
+
+  <script>
+    const grid = document.getElementById("grid");
+    const timeDisplay = document.getElementById("time");
+    const scoreDisplay = document.getElementById("score");
+
+    let score = 0;
+    let timeLeft = 30;
+    let timer;
+
+    const images = [
+      {src: "llama1.png", isLama: true},
+      {src: "llama2.png", isLama: true},
+      {src: "llama3.png", isLama: true},
+      {src: "llama4.png", isLama: true},
+      {src: "beehive1.png", isLama: false},
+      {src: "beehive2.png", isLama: false},
+      {src: "beehive3.png", isLama: false},
+      {src: "beehive4.png", isLama: false},
+    ];
+
+    function startGame() {
+      score = 0;
+      timeLeft = 30;
+      scoreDisplay.textContent = score;
+      timeDisplay.textContent = timeLeft;
+      grid.innerHTML = "";
+      clearInterval(timer);
+
+      for (let i = 0; i < 12; i++) {
+        const random = images[Math.floor(Math.random() * images.length)];
+        const img = document.createElement("img");
+        img.src = random.src;
+        img.dataset.isLama = random.isLama;
+        img.onclick = () => handleClick(img);
+        grid.appendChild(img);
+      }
+
+      timer = setInterval(() => {
+        timeLeft--;
+        timeDisplay.textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          alert("⏰ Konec hry! Tvé skóre je: " + score);
+        }
+      }, 1000);
+    }
+
+    function handleClick(el) {
+      el.classList.add("jump");
+      setTimeout(() => el.classList.remove("jump"), 400);
+
+      if (el.dataset.isLama === "true") {
+        score++;
+      } else {
+        score = Math.max(0, score - 1);
+      }
+      scoreDisplay.textContent = score;
+    }
+  </script>
+</body>
+</html>
